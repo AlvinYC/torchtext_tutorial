@@ -361,7 +361,11 @@ print('train.examples[0].de ==> ' + str(train.examples[0].de))
 ## 情境3 vs 情境4
  - 情境3: Dataset + BucketIterator
  - 情境4: Dataset + Iterator
+
 與情境1/2的比較結論一樣，只要Dataset的取用模式確定了，BucketIterator與Iterator用法沒有多大差異
+
+此處，Dataset是由TabularDataset抽取Example倒入Dataset中，Dataset是在 line 6, Line 9 所完成
+由於貼圖技術不好，可能會覺得跟上一張圖一樣，其實line 6/9有點不同，稍加注意就可以看到差異
 
 ![](https://i.imgur.com/5A2mh3m.jpg)
 
