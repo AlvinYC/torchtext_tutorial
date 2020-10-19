@@ -1,7 +1,7 @@
 # torchtext toturial - 如何秒殺NLP資料集
 
 - [torchtext 資料結構](#torchtext-資料結構)
-  - [torchtext.data 主結構](#torchtext.data-主結構)
+  - [torchtext.data 主結構](#torchtext\.data-主結構)
     - 資料儲存單位 dataset, Batch, Example
     - 迭代器 iterators 
     - Fields
@@ -53,7 +53,7 @@
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
 
 # torchtext 資料結構
-## torchtext.data 主結構
+## torchtext\.data 主結構
 ### 資料儲存單位 dataset, Batch, Example
 
    - torchtext.data.__Dataset__(examples, fields, filter_pred=None)
