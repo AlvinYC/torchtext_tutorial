@@ -9,10 +9,10 @@
   - [其他功能](#其他功能)
   - [torchext標準使用方式](#torchext標準使用方式)
 - [使用情境](#使用情境)
-  - [情境1: TabularDataset + BucketIterator(建議)](#情境1:-TabularDataset-+-BucketIterator(建議))
-  - [情境2: TabularDataset + Iterator](#情境2:-TabularDataset-+-Iterator)
-  - [情境3: Dataset + BucketIterator](#情境3:-Dataset-+-BucketIterator)
-  - [情境4: Dataset + Iterator](#情境4:-Dataset-+-Iterator)
+  - [情境1: TabularDataset/BucketIterator(建議)](#情境1:-TabularDataset/BucketIterator(建議))
+  - [情境2: TabularDataset/Iterator](#情境2:-TabularDataset/Iterator)
+  - [情境3: Dataset/BucketIterator](#情境3:-Dataset/BucketIterator)
+  - [情境4: Dataset/Iterator](#情境4:-Dataset/Iterator)
 - [情境比較](#情境比較)
   - [情境1 vs 情境2](#情境1-vs-情境2)
   - [情境3 vs 情境4](#情境3-vs-情境4)
@@ -42,7 +42,7 @@
   - [load_dataset by json](#load_dataset-by-json)
   - [假如不用torchtext](#假如不用torchtext)
 - [進階用法](#進階用法)
-  - [中文處理（斷詞)](#中文處理（斷詞))
+  - [中文處理/斷詞](#中文處理/斷詞)
   - [preprocessing 與 postprocessing](#preprocessing-與-postprocessing)
     - [preprocessing](#preprocessing)
     - [使用 data.Pipeline 加速 preprocessing](#使用-data.Pipeline-加速-preprocessing)
@@ -50,9 +50,8 @@
     - [使用 data.Pipeline 加速 postprocessing](#使用-data.Pipeline-加速-postprocessing)
   - [使用 Word2Vector (W2V)](#使用-Word2Vector-(W2V))
 
-
-
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
+
 # torchtext 資料結構
 ## torchtext.data 主結構
 ### 資料儲存單位 dataset, Batch, Example
@@ -62,12 +61,16 @@
    - torchtext.data.__TabularDataset__(path, format, fields, skip_header=False, csv_reader_params={}, **kwargs)
    - torchtext.data.__Batch__(data=None, dataset=None, device=None）
    - torchtext.data.__Example__
+
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
+
 ### 迭代器 iterators 
    - torchtext.data.__Iterator__(dataset, batch_size, sort_key=None, device=None, batch_size_fn=None, train=True, repeat=False, shuffle=None, sort=None, sort_within_batch=None)
    - torchtext.data.__BucketIterator__(dataset, batch_size, sort_key=None, device=None, batch_size_fn=None, train=True, repeat=False, shuffle=None, sort=None, sort_within_batch=None)
    - torchtext.data.__BPTTIterator__(dataset, batch_size, bptt_len, **kwargs)
    
 torchtext 支援三種迭代器，從參數可以看到都是以 batch 為單位。
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 
 ### Fields
 
@@ -77,16 +80,19 @@ torchtext 支援三種迭代器，從參數可以看到都是以 batch 為單位
    - torchtext.data.__SubwordField__(**kwargs)
    - torchtext.data.__NestedField__(nesting_field, use_vocab=True, init_token=None, eos_token=None, fix_length=None, dtype=torch.int64, preprocessing=None, postprocessing=None, tokenize=None, tokenizer_language='en', include_lengths=False, pad_token=\'<pad>\', pad_first=False, truncate_first=False)
 
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
+
 ## Pipline
-   - torchtext.data.__Pipeline__(convert_token=None)
-   
-  
+   - torchtext.data.__Pipeline__(convert_token=None)[[top]](#torchtext-toturial---如何秒殺NLP資料集)  
+
 ## 其他功能
    - torchtext.data.__batch__(data, batch_size, batch_size_fn=None)
    從dataset（如TabluraDataset object) 直接取出 example，並以list方式回傳，比較直觀
    - torchtext.data.__pool__(data, batch_size, key, batch_size_fn=<function <lambda>>, random_shuffler=None, shuffle=False, sort_within_batch=False)
    - torchtext.data.__get_tokenizer__(tokenizer, language='en')
-   
+
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)   
+
 ## torchext標準使用方式
 torchtext.data.__Dataset__(examples, fields, filter_pred=None)
    資料已經是example形式，並且已知field，將該二資訊轉換為torchtext.data.Dataset 格式 
@@ -147,7 +153,7 @@ dict_keys(['de', 'en'])
 ```
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
 # 使用情境
-## 情境1: TabularDataset + BucketIterator(建議)
+## 情境1: TabularDataset/BucketIterator(建議)
 ```python
 import torchtext.data as data
 DE = data.Field(is_target=False)
@@ -215,7 +221,7 @@ train.examples[0].en ==> ['Two', 'young,', 'White', 'males', 'are', 'outside', '
 train.examples[0].de ==> ['Zwei', 'junge', 'weiße', 'Männer', 'sind', 'im', 'Freien', 'in', 'der', 'Nähe', 'vieler', 'Büsche.']
 ```
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
-## 情境2: TabularDataset + Iterator
+## 情境2: TabularDataset/Iterator
 ```python
 import torchtext.data as data
 DE = data.Field(is_target=False)
@@ -269,7 +275,8 @@ tensor([  15,1467,1313, 866,  12,  64,  75, 309,1677,   1,   1,   1,   1,   1,  
 ['Two', 'young,', 'White', 'males', 'are', 'outside', 'near', 'many', 'bushes.', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>']
 ```
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
-## 情境3: Dataset + BucketIterator
+
+## 情境3: Dataset/BucketIterator
   - data.Dataset 與 data.TabularDataset 最大的差異就是 data.Dataset 需要自己準備 Example, TabularDataset可以透過檔案(json/csv)直接取得
 ```python
 import torchtext.data as data
@@ -302,7 +309,8 @@ print('train.examples[0].en ==> ' + str(train.examples[0].en))
 print('train.examples[0].de ==> ' + str(train.examples[0].de))
 ```
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
-## 情境4: Dataset + Iterator
+
+## 情境4: Dataset/Iterator
 ```python
 import torchtext.data as data
 DE = data.Field(is_target=False)
@@ -356,6 +364,7 @@ print('train.examples[0].de ==> ' + str(train.examples[0].de))
 與情境1/2的比較結論一樣，只要Dataset的取用模式確定了，BucketIterator與Iterator用法沒有多大差異
 
 ![](https://i.imgur.com/5A2mh3m.jpg)
+
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
 # 其他使用方式
 
@@ -392,6 +401,7 @@ Ein kleines Mädchen klettert in ein Spielhaus aus Holz.	A little girl climbing 
 {"DE": "Mehrere Männer mit Schutzhelmen bedienen ein Antriebsradsystem.", "EN": "Several men in hard hats are operating a giant pulley system."}
 {"DE": "Ein kleines Mädchen klettert in ein Spielhaus aus Holz.", "EN": "A little girl climbing into a wooden playhouse."}
 ```
+
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ### Example from list
 
@@ -1297,7 +1307,7 @@ def split_padding(data):
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
 # 進階用法
 
-## 中文處理（斷詞)
+## 中文處理/斷詞
 以LCSTS data 為例，LCSTS是一個摘要資料集
 摘要的作法與翻譯問題在模型的處理上是一樣的，
 我們可以想像，翻譯是將A語言轉變成B語言
