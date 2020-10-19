@@ -9,7 +9,7 @@
   - [其他功能](#其他功能)
   - [torchext標準使用方式](#torchext標準使用方式)
 - [使用情境](#使用情境)
-  - [情境1: TabularDataset/BucketIterator(建議)](#情境1:-TabularDatasetBucketIterator(建議))
+  - [情境1: TabularDataset/BucketIterator(建議)](#情境1:-TabularDatasetBucketIterator建議)
   - [情境2: TabularDataset/Iterator](#情境2:-TabularDatasetIterator)
   - [情境3: Dataset/BucketIterator](#情境3:-DatasetBucketIterator)
   - [情境4: Dataset/Iterator](#情境4:-DatasetIterator)
@@ -27,7 +27,7 @@
   - [自動拆分資料集 split](#自動拆分資料集-split)
     - 注意事項
   - [padding 策略](#padding-策略)
-    - [每句話前後自動補\<sos\>\<eos\>](#每句話前後自動補\<sos\>\<eos\>)
+    - [每句話前後自動補\<sos\>\<eos\>](#每句話前後自動補soseos)
 - [Multi30 DE2EN 資料集](#Multi30-DE2EN-資料集)
   - [introduction](#introduction)
     - [Multi30k by github](#Multi30k-by-github) 
