@@ -1,7 +1,7 @@
 # torchtext toturial - 如何秒殺NLP資料集
 
 - [torchtext 資料結構](#torchtext-資料結構)
-  - [torchtext.data 主結構](#torchtext\.data-主結構)
+  - [torchtext.data 主結構](#torchtextdata-主結構)
     - 資料儲存單位 dataset, Batch, Example
     - 迭代器 iterators 
     - Fields
@@ -9,10 +9,10 @@
   - [其他功能](#其他功能)
   - [torchext標準使用方式](#torchext標準使用方式)
 - [使用情境](#使用情境)
-  - [情境1: TabularDataset/BucketIterator(建議)](#情境1:-TabularDataset/BucketIterator(建議))
-  - [情境2: TabularDataset/Iterator](#情境2:-TabularDataset/Iterator)
-  - [情境3: Dataset/BucketIterator](#情境3:-Dataset/BucketIterator)
-  - [情境4: Dataset/Iterator](#情境4:-Dataset/Iterator)
+  - [情境1: TabularDataset/BucketIterator(建議)](#情境1:-TabularDatasetBucketIterator(建議))
+  - [情境2: TabularDataset/Iterator](#情境2:-TabularDatasetIterator)
+  - [情境3: Dataset/BucketIterator](#情境3:-DatasetBucketIterator)
+  - [情境4: Dataset/Iterator](#情境4:-DatasetIterator)
 - [情境比較](#情境比較)
   - [情境1 vs 情境2](#情境1-vs-情境2)
   - [情境3 vs 情境4](#情境3-vs-情境4)
@@ -53,7 +53,7 @@
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
 
 # torchtext 資料結構
-## torchtext\.data 主結構
+## torchtext.data 主結構
 ### 資料儲存單位 dataset, Batch, Example
 
    - torchtext.data.__Dataset__(examples, fields, filter_pred=None)
