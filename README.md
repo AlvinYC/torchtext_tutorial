@@ -1,4 +1,59 @@
 # torchtext toturial - 如何秒殺NLP資料集
+
+- [torchtext 資料結構](#torchtext-資料結構)
+  - [torchtext.data 主結構](#torchtext.data-主結構)
+    - 資料儲存單位 dataset, Batch, Example
+    - 迭代器 iterators 
+    - Fields
+  - [Pipline](#Pipline)
+  - [其他功能](#其他功能)
+  - [torchext標準使用方式](#torchext標準使用方式)
+- [使用情境](#使用情境)
+  - [情境1: TabularDataset + BucketIterator(建議)](#情境1:-TabularDataset-+-BucketIterator(建議))
+  - [情境2: TabularDataset + Iterator](#情境2:-TabularDataset-+-Iterator)
+  - [情境3: Dataset + BucketIterator](#情境3:-Dataset-+-BucketIterator)
+  - [情境4: Dataset + Iterator](#情境4:-Dataset-+-Iterator)
+- [情境比較](#情境比較)
+  - [情境1 vs 情境2](#情境1-vs-情境2)
+  - [情境3 vs 情境4](#情境3-vs-情境4)
+- [其他使用方式](#其他使用方式)
+  - [手動建置 Example](#手動建置-Example)
+    - [Example from list](#Example-from-list)
+    - [Example from dict](#Example-from-dict)
+        - JSON array 處理方式
+        - dict list 處理方式
+    - [fromlist/fromdict 比較](#fromlist/fromdict-比較)
+    - [情境3 修改為人工建置 Example](#情境3-修改為人工建置-Example)
+  - [自動拆分資料集 split](#自動拆分資料集-split)
+    - 注意事項
+  - [padding 策略](#padding-策略)
+    - [每句話前後自動補\<sos\>\<eos\>](#每句話前後自動補\<sos\>\<eos\>)
+- [Multi30 DE2EN 資料集](#Multi30-DE2EN-資料集)
+  - [introduction](#introduction)
+    - [Multi30k by github](#Multi30k-by-github) 
+    - [sample](#sample)
+    - [multi30k raw to JSON](#multi30k-raw-to-JSON )
+  - [CSV format](#CSV-format)
+    - [CSV sample](#CSV-sample)
+    - [multi30k raw to csv format](#multi30k-raw-to-csv-format)
+- [seq2seq 應用](#seq2seq-應用)
+  - [KEON seq2seq encode](#KEON-seq2seq-encode)
+  - [load_dataset by spacy](#load_dataset-by-spacy)
+  - [load_dataset by json](#load_dataset-by-json)
+  - [假如不用torchtext](#假如不用torchtext)
+- [進階用法](#進階用法)
+  - [中文處理（斷詞)](#中文處理（斷詞))
+  - [preprocessing 與 postprocessing](#preprocessing-與-postprocessing)
+    - [preprocessing](#preprocessing)
+    - [使用 data.Pipeline 加速 preprocessing](#使用-data.Pipeline-加速-preprocessing)
+    - [postprocessing](#postprocessing)
+    - [使用 data.Pipeline 加速 postprocessing](#使用-data.Pipeline-加速-postprocessing)
+  - [使用 Word2Vector (W2V)](#使用-Word2Vector-(W2V))
+
+
+
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
+# torchtext 資料結構
 ## torchtext.data 主結構
 ### 資料儲存單位 dataset, Batch, Example
 
@@ -90,7 +145,7 @@ class 'torchtext.data.example.Example'>
 >>> train.examples[0].__dict__.keys() #再確認一次
 dict_keys(['de', 'en'])
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 # 使用情境
 ## 情境1: TabularDataset + BucketIterator(建議)
 ```python
@@ -159,6 +214,7 @@ trian_batch.en[:,0] ==> first column
 train.examples[0].en ==> ['Two', 'young,', 'White', 'males', 'are', 'outside', 'near', 'many', 'bushes.']
 train.examples[0].de ==> ['Zwei', 'junge', 'weiße', 'Männer', 'sind', 'im', 'Freien', 'in', 'der', 'Nähe', 'vieler', 'Büsche.']
 ```
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ## 情境2: TabularDataset + Iterator
 ```python
 import torchtext.data as data
@@ -212,6 +268,7 @@ tensor([[  15, 129,   3,   3,  15,   3,   3,   3,   3,1960,   3, 119,   3,   3, 
 tensor([  15,1467,1313, 866,  12,  64,  75, 309,1677,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1,   1])
 ['Two', 'young,', 'White', 'males', 'are', 'outside', 'near', 'many', 'bushes.', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>', '<pad>']
 ```
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ## 情境3: Dataset + BucketIterator
   - data.Dataset 與 data.TabularDataset 最大的差異就是 data.Dataset 需要自己準備 Example, TabularDataset可以透過檔案(json/csv)直接取得
 ```python
@@ -244,7 +301,7 @@ print(first_de)
 print('train.examples[0].en ==> ' + str(train.examples[0].en))
 print('train.examples[0].de ==> ' + str(train.examples[0].de))
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ## 情境4: Dataset + Iterator
 ```python
 import torchtext.data as data
@@ -278,6 +335,7 @@ print(first_de)
 print('train.examples[0].en ==> ' + str(train.examples[0].en))
 print('train.examples[0].de ==> ' + str(train.examples[0].de))
 ```
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 # 情境比較
 ## 情境1 vs 情境2
  - 情境1: TabularDataset + BucketIterator
@@ -290,7 +348,7 @@ print('train.examples[0].de ==> ' + str(train.examples[0].de))
 
 ![](https://i.imgur.com/lBHPdwY.jpg)
 
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 
 ## 情境3 vs 情境4
  - 情境3: Dataset + BucketIterator
@@ -298,7 +356,7 @@ print('train.examples[0].de ==> ' + str(train.examples[0].de))
 與情境1/2的比較結論一樣，只要Dataset的取用模式確定了，BucketIterator與Iterator用法沒有多大差異
 
 ![](https://i.imgur.com/5A2mh3m.jpg)
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 # 其他使用方式
 
 ## 手動建置 Example
@@ -334,7 +392,7 @@ Ein kleines Mädchen klettert in ein Spielhaus aus Holz.	A little girl climbing 
 {"DE": "Mehrere Männer mit Schutzhelmen bedienen ein Antriebsradsystem.", "EN": "Several men in hard hats are operating a giant pulley system."}
 {"DE": "Ein kleines Mädchen klettert in ein Spielhaus aus Holz.", "EN": "A little girl climbing into a wooden playhouse."}
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ### Example from list
 
 ```python
@@ -386,7 +444,7 @@ examples
  <torchtext.data.example.Example object at 0x1266d2e10>,
  <torchtext.data.example.Example object at 0x127f9e550>, ...]
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ### Example from dict
 這裏的情況有點特別，要分兩種情況討論
  1. 文字檔(JSON)是以 json array 格式儲存
@@ -414,7 +472,7 @@ examples
 {"DE": "Mehrere Männer mit Schutzhelmen bedienen ein Antriebsradsystem.", "EN": "Several men in hard hats are operating a giant pulley system."}
 {"DE": "Ein kleines Mädchen klettert in ein Spielhaus aus Holz.", "EN": "A little girl climbing into a wooden playhouse."}
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 #### JSON array 處理方式
 
 如果文字檔已經是 json array 格式，那就可以用下面的code處理
@@ -447,6 +505,7 @@ len of manual examples ==> 3
 examples[0].de ==> ['Zwei', 'junge', 'weiße', 'Männer', 'sind', 'im', 'Freien', 'in', 'der', 'Nähe', 'vieler', 'Büsche.']
 examples[0].en ==> ['Two', 'young,', 'White', 'males', 'are', 'outside', 'near', 'many', 'bushes.']
 ```
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 #### dict list 處理方式
 
 如果資料儲蓄的方式並不是json array，而是dict list
@@ -484,6 +543,7 @@ len of manual examples ==> 29000
 examples[0].de ==> ['Zwei', 'junge', 'weiße', 'Männer', 'sind', 'im', 'Freien', 'in', 'der', 'Nähe', 'vieler', 'Büsche.']
 examples[0].en ==> ['Two', 'young,', 'White', 'males', 'are', 'outside', 'near', 'many', 'bushes.']
 ```
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ### fromlist/fromdict 比較
 從前面的code來看，當 JSON file的儲存方式是以 dict list 格式儲存時
 Example.fromlist與Example.fromdict的對應方法是很類似的
@@ -520,7 +580,7 @@ EN = data.Field(is_target=True)
 fields = {'DE':('de',DE),'EN':('en',EN)}    # 差異處
 examples = list(map(lambda x:data.Example.fromdict(x,fields),dict_list))
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ### 情境3 修改為人工建置 Example
 ```python
 # 情境3寫法
@@ -570,7 +630,7 @@ train_bucketiter = data.BucketIterator(dataset=train_dataset,batch_size=32, sort
 # retrive frist batche
 train_batch = next(iter(train_bucketiter))
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 
 ## 自動拆分資料集 split
 情境1,2,3,4中不管是data.Dataset還是data.TabularDataset都是用匯入各自需要的資料
@@ -675,6 +735,7 @@ len train.examples = 23200
 len valid.examples = 2900
 len test.examples  = 2900
 ```
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ### 注意事項
 
 不能用這個方式做cross validation資料切割
@@ -687,7 +748,7 @@ tencross = train.split(split_ratio=[0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1])
 Exception has occurred: AssertionError
 Length of split ratio list should be 2 or 3, got [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ## padding 策略
 單純的LSTM固定長度輸入可能就沒有padding問題，但是如果是Seq2Seq模型，就需要能適應語句不定長度。
 
@@ -775,8 +836,8 @@ train_bucket_iter = iter(train_bucketiter)
         [.de]:[torch.LongTensor of size 21x32]
         [.en]:[torch.LongTensor of size 20x32]
 ```
-
-### 每句話前後自動補<sos><eos>
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
+### 每句話前後自動補\<sos\>\<eos\>
 
 
 ```python
@@ -825,7 +886,7 @@ tensor([[    2,     2,     2,     2,     2],
 ['<sos>', '<eos>']
 
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 # Multi30 DE2EN 資料集
 
 ## introduction
@@ -876,6 +937,7 @@ tensor([[    2,     2,     2,     2,     2],
     │   └── tokenizer
     └── subword-nmt
 ```
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ### sample
   - `train.de` (29,000 samples)
   ```
@@ -903,6 +965,7 @@ A man in shorts and a Hawaiian shirt leans over the rail of a pilot boat, with f
 {"DE": "Zwei junge weiße Männer sind im Freien in der Nähe vieler Büsche.", "EN": "Two young, White males are outside near many bushes."}
 {"DE": "Mehrere Männer mit Schutzhelmen bedienen ein Antriebsradsystem.", "EN": "Several men in hard hats are operating a giant pulley system."}
 ```
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ### multi30k raw to JSON 
 
 `multi30k2json.py`
@@ -963,19 +1026,20 @@ for i in range(len(train_list)):
         print(str(i) + ' error ==> \t' + train_list[i])
 print('err_count = ' + str(err_count))
 ```
-
-## CSV
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
+## CSV format
+you can download Multi30k w/ csv format in the following link
   - train.csv 29,000 [[download](https://reurl.cc/EzXYgm)]
   - valid.csv  1,014 [[download](https://reurl.cc/EzXYV0)]
   - test.csv   1,000 [[download](https://reurl.cc/v1mGLk)]
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ### CSV sample
 ```
 Zwei junge weiße Männer sind im Freien in der Nähe vieler Büsche.	Two young, White males are outside near many bushes.
 Mehrere Männer mit Schutzhelmen bedienen ein Antriebsradsystem.	Several men in hard hats are operating a giant pulley system.
 Ein kleines Mädchen klettert in ein Spielhaus aus Holz.	A little girl climbing into a wooden playhouse.
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ### multi30k raw to csv format 
 
 `multi30k2csv.py`
@@ -1015,7 +1079,7 @@ write_csv('./multi30k_csv/train.csv', zip(train_de,train_en))
 write_csv('./multi30k_csv/valid.csv', zip(valid_de,valid_en))
 write_csv('./multi30k_csv/test.csv', zip(test_de,test_en))
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 # seq2seq 應用
 一個deep learning軟體架構大致是以三個部分組成
 1. dataset 處理 ===> `dataset.py` 或稱 `utils.py`
@@ -1029,7 +1093,7 @@ torchtext可以讓我們省去大量的時間去準備dataset
 
 ![](https://i.imgur.com/DvwriNY.jpg)
 
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ## KEON seq2seq encode ([github](https://github.com/keon/seq2seq))
 ```python
 from utils import load_dataset
@@ -1115,7 +1179,7 @@ outputs.shape = [29,32,512]
 hidden.shape = [1,32,512]
 
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ## load_dataset by spacy
 ```python=
 # utils.py 
@@ -1154,7 +1218,7 @@ def load_dataset(batch_size, macbook=False):
             (train, val, test), batch_size=batch_size, repeat=False)
     return train_iter, val_iter, test_iter, DE, EN
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ## load_dataset by json
 ```python=
 def load_dataset_txt(batch_size,macbook=False):
@@ -1177,7 +1241,7 @@ def load_dataset_txt(batch_size,macbook=False):
         (train, val, test), batch_size=batch_size, repeat=False)
     return train_iter, val_iter, test_iter, DE, EN
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ## 假如不用torchtext
 
 from Global-Encoding ([github](https://github.com/lancopku/Global-Encoding)), data loading need additional two files
@@ -1230,6 +1294,7 @@ def padding(data):
 def ae_padding(data):
 def split_padding(data):
 ```
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 # 進階用法
 
 ## 中文處理（斷詞)
@@ -1492,7 +1557,7 @@ from utils import load_dataset,load_dataset_txt,load_dataset_lcsts
 filename =  './lcsts_xml/PART_I_10000.txt'
 train_iter, val_iter, test_iter, DE, EN = load_dataset_lcsts(args.batch_size,filename=filename)
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ## preprocessing 與 postprocessing
 
 
@@ -1521,6 +1586,7 @@ postprocessing是在iterator階段處理，而且是在數值化之後，tensor�
 用架構圖來看會更清楚 ref [link](https://kknews.cc/code/5r4g2l8.html)
 
 ![](https://i.imgur.com/Frc9VKy.jpg)
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ### preprocessing
 
 下面是一個 Field 調用 preprocess 的範例，使用LCSTS資料集的時候都會有一個動作是簡轉繁，有時我們是在file階段直接做好簡轉繁，程式開始執行是就直接讀繁體的目錄，但這裡是透過 Field的 preprocess 方式，將每一個 exmaple 都做簡轉繁都處理，在做後續的 batch 處理。
@@ -1596,8 +1662,8 @@ examples[0].src
 examples[0].trg 
 ['修改', '后', '的', '立法法', '全文', '公布']
 ```
-
-### 使用 data.Pipeline 加速
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
+### 使用 data.Pipeline 加速 preprocessing
 上面將 SRC 做簡轉繁的核心程式為，preprocessing帶入一個subroutine，
 subroutine 的 input 是一個 list (tokenzie 後的結果)，
 subroutine 的內容就是自己寫一段程式去處理這個 list 當作自己想要的前處理
@@ -1646,7 +1712,7 @@ SRC = Field(tokenize=jieba_tokenizer, include_lengths=True,
     
     在 preprocess 使用 Pipeline(OpenCC) 耗時 263 秒
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ### postprocessing
 
 直接給範例，以Multi30k DE-EN的情況來說
@@ -1685,8 +1751,8 @@ batch.src[0][:,0]
 tensor([  2, 223, 223, 223,  32, 239,  17,  62,   6,  13,  53,   0,   0,   3,
           1,   1,   1,   1,   1])
 ```
-
-### 使用 data.Pipeline 加速
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
+### 使用 data.Pipeline 加速 postprocessing
 
 
 ## 使用 Word2Vector (W2V)
@@ -1725,4 +1791,4 @@ embedding = nn.Embedding(2000, 300)
 weight_matrix = TEXT.vocab.vectors
 embedding.weight.data.copy_(weight_matrix)
 ```
-
+[[top]](#torchtext-toturial---如何秒殺NLP資料集)
