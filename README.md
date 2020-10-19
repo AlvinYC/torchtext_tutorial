@@ -9,10 +9,10 @@
   - [其他功能](#其他功能)
   - [torchext標準使用方式](#torchext標準使用方式)
 - [使用情境](#使用情境)
-  - [情境1: TabularDataset/BucketIterator(建議)](#情境1:-TabularDatasetBucketIterator建議)
-  - [情境2: TabularDataset/Iterator](#情境2:-TabularDatasetIterator)
-  - [情境3: Dataset/BucketIterator](#情境3:-DatasetBucketIterator)
-  - [情境4: Dataset/Iterator](#情境4:-DatasetIterator)
+  - [情境1: TabularDataset/BucketIterator(建議)](#情境1:-tabulardatasetbucketiterator建議)
+  - [情境2: TabularDataset/Iterator](#情境2:-tabulardatasetiterator)
+  - [情境3: Dataset/BucketIterator](#情境3:-datasetbucketiterator)
+  - [情境4: Dataset/Iterator](#情境4:-datasetiterator)
 - [情境比較](#情境比較)
   - [情境1 vs 情境2](#情境1-vs-情境2)
   - [情境3 vs 情境4](#情境3-vs-情境4)
@@ -22,7 +22,7 @@
     - [Example from dict](#Example-from-dict)
         - JSON array 處理方式
         - dict list 處理方式
-    - [fromlist/fromdict 比較](#fromlist/fromdict-比較)
+    - [fromlist/fromdict 比較](#fromlistfromdict-比較)
     - [情境3 修改為人工建置 Example](#情境3-修改為人工建置-Example)
   - [自動拆分資料集 split](#自動拆分資料集-split)
     - 注意事項
@@ -42,7 +42,7 @@
   - [load_dataset by json](#load_dataset-by-json)
   - [假如不用torchtext](#假如不用torchtext)
 - [進階用法](#進階用法)
-  - [中文處理/斷詞](#中文處理/斷詞)
+  - [中文處理/斷詞](#中文處理斷詞)
   - [preprocessing 與 postprocessing](#preprocessing-與-postprocessing)
     - [preprocessing](#preprocessing)
     - [使用 data.Pipeline 加速 preprocessing](#使用-data.Pipeline-加速-preprocessing)
