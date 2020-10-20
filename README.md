@@ -1109,6 +1109,18 @@ torchtext可以讓我們省去大量的時間去準備dataset
 
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ## KEON seq2seq encode ([github](https://github.com/keon/seq2seq))
+這是一段以seq2seq model對Multi30k de2en的部分程式，說是部份其實已經包含了主要要運作的部份，
+我們可以看到 main()裡面對資料的擷取其實只有一行，就是 train_iter = load_dataset()，
+執行完load_dataset後，我們就預期拿到以batch為單位的資料型態，後續就可以那這些資料來進入模型，
+從下面的程式中我們可以看到，取得資料後我們需要做就只是
+
+1. 設定準備要跑的模型
+2. for loop for each epoch
+3. 每個epoch都執行一次 train
+
+至於load_dataset究竟怎麼做，在下面的段落會有詳細的說明
+
+
 ```python
 from utils import load_dataset
 
@@ -1195,7 +1207,17 @@ hidden.shape = [1,32,512]
 ```
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ## load_dataset by spacy
-```python=
+由於 torchtext本身已經提供了Multi30k這個資料集，我們可以取用torchtext所提供資料，
+只要下面的段落就可以取得Multi30k，
+```python
+from torchtext.datasets import Multi30k
+spacy_de = spacy.load('de')
+spacy_en = spacy.load('en')
+```
+缺點是你不知道這個資料集原先究竟長什麼樣子，所以我比較推薦自己找到Multi30k的明碼資料再透過trochtext處理，
+下面是使用 torchtext 提供的 multi30k的資料處理方式，後面我們再提供一段程式是處理自己下載的 multi30k 明碼
+
+```python
 # utils.py 
 import re
 import spacy
@@ -1234,7 +1256,8 @@ def load_dataset(batch_size, macbook=False):
 ```
 [[top]](#torchtext-toturial---如何秒殺NLP資料集)
 ## load_dataset by json
-```python=
+這裏就是下載multi30k明碼後自己處理的方式，比較直覺
+```python
 def load_dataset_txt(batch_size,macbook=False):
     DE = Field(include_lengths=True,
                 init_token='<sos>', eos_token='<eos>')
